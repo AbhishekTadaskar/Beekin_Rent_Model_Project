@@ -1,0 +1,11 @@
+{
+  "experiment_name": "baseline_vs_census",
+  "dataset_used": "train.csv / test.csv",
+  "baseline_features": "property_only",
+  "enhanced_features": "property_plus_census",
+  "baseline_mdape": 38.69357283150387,
+  "census_mdape": 40.478970304670334,
+  "improvement_delta": -1.7853974731664621,
+  "model_type": "xgboost",
+  "status": "census_did_not_help"
+}
