@@ -1,0 +1,51 @@
+
+📓Beekin Rent Model — Project Work Summary 
+
+1. Problem Understanding and Objective
+The goal of this project was to understand whether adding census‑based demographic information could actually improve a baseline rental price prediction model, and whether the extra complexity and risk would be worth it. The work was not just about training a model — it also focused on how the model should be refreshed over time, monitored for performance changes, and managed safely in a production‑style workflow.
+
+2. Data Sources Used
+I worked with four main datasets:
+- train.csv — historical property transaction data used to train the model
+- test.csv — a hold‑out dataset used to evaluate and compare model performance
+- data_2022.csv — new incremental data used for the model refresh process
+- census.csv — an external dataset used only for experimentation, not for production
+
+3. Experiment & Modeling Work
+I first built a baseline model using only core property and location features. Then I created a second version of the model that included census features so I could compare both approaches. The models were evaluated using MdAPE as the primary metric, and the comparison results were logged and saved. Based on the experiments, the census features did not provide meaningful improvement and introduced additional risk and complexity, so they were not used in the production‑style model design.
+
+4. Model Training & Versioning
+The baseline model was trained and saved as a reusable artifact (beekin_model_baseline.pkl). I then implemented a retraining workflow using the 2022 dataset, which produced an updated model (beekin_model_2022.pkl). The feature encoder was saved separately so that preprocessing remains consistent across future runs. This ensures the models can be reproduced, compared, and monitored over time.
+
+5. Model Refresh Workflow
+The retrain_2022.ipynb notebook was created to support automatic model refresh when new data becomes available. The retraining follows the same feature engineering logic as the baseline model, and all generated outputs are stored as versioned artifacts so that the refresh process is traceable and auditable.
+
+6. Monitoring & Performance Change Detection
+To avoid blindly promoting a new model, I implemented a monitoring workflow that compares the performance of the old and new models using the same evaluation dataset. The script calculates MdAPE for both versions, applies a tolerance rule, and generates a monitoring report in JSON format. This helps detect silent performance degradation and supports safer deployment decisions.
+
+7. Decision & Rollback Logic
+A simple decision rule was defined:
+- If the new model performs better or is within the allowed tolerance range, it can be promoted.
+- If performance drops beyond the tolerance threshold, the recommendation is to roll back to the previous model.
+This approach mirrors real‑world MLOps practices where reliability and risk control are prioritized over automatic updates.
+
+8. Architecture & System Design Work
+I designed an architecture that follows a clear lifecycle:
+Data Sources → Ingestion → Features → Training → Registry → Monitoring → Decision / Rollback
+I also created diagrams and documentation to represent how the system flows end‑to‑end, demonstrating thinking beyond just coding the model.
+
+9. Product & Risk Memo
+A one‑page memo was written to capture the reasoning behind the design choices — including feature risk considerations, refresh frequency, failure scenarios, and the trade‑off between accuracy and monotonicity. This shows how modeling decisions were made from both a technical and product perspective.
+
+10. Final Deliverables Produced
+The final project includes:
+- experiments.ipynb — baseline vs census experiments
+- retrain_2022.ipynb — model retraining workflow
+- monitor_model.ipynb — performance monitoring and tolerance evaluation
+- Saved model artifacts: beekin_model_baseline.pkl, beekin_model_2022.pkl, encoder file
+- model_comparison_results.json and model_monitor_report.json
+- Architecture diagrams and system overview documents
+- Beekin_Rent_Model_Memo.pdf
+
+Overall Outcome
+The project demonstrates an end‑to‑end, production‑aligned machine learning workflow: experimentation, retraining, model versioning, monitoring, safe refresh decisions, and clear documentation — similar to how a real ML system would be managed in practice.
